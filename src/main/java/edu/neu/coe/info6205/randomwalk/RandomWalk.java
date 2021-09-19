@@ -93,36 +93,11 @@ public class RandomWalk {
         int n = 30;
         if (args.length > 1) n = Integer.parseInt(args[1]);*/
         int n=1000;
-
-        //To write the data into a txt file in order to analyze
-        File writeName=new File("C:\\Users\\63197\\Desktop\\data.txt");
-        try {
-            BufferedWriter out=new BufferedWriter(new FileWriter(writeName));
-            for(int m=1;m<=100;m++) {
-                double meanDistance = randomWalkMulti(m, n);
-                out.write(m+"\t"+meanDistance+"\r\n");
-                out.flush();
-                System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
-            }
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        for(int m=1;m<=100;m++) {
+            double meanDistance = randomWalkMulti(m, n);
+            System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
         }
 
-
-/*        //6 different value of n
-        int[] ns={5,6,8,5,7,10};
-
-        //run every n value for 10 times
-        for(int n:ns) {
-            for (int i = 1; i <= 10; i++) {
-                RandomWalk randomWalk = new RandomWalk();
-                randomWalk.randomWalk(n);
-                System.out.println("Experiment No." + i + " " + n + " steps: " + "Position: X=" + randomWalk.x + " Y=" + randomWalk.y +
-                        " Distance:" + randomWalk.distance());
-            }
-            System.out.println();
-        }*/
 
     }
 
