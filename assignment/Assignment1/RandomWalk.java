@@ -2,7 +2,7 @@
  * Copyright (c) 2017. Phasmid Software
  */
 
-package edu.neu.coe.info6205.assignment.Assignment1;
+package edu.neu.coe.info6205.randomwalk;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -25,7 +25,7 @@ public class RandomWalkTest {
      */
     @Test
     public void testMove1() {
-        edu.neu.coe.info6205.randomwalk.RandomWalk1 rw = new edu.neu.coe.info6205.randomwalk.RandomWalk1();
+        edu.neu.coe.info6205.randomwalk.RandomWalk rw = new edu.neu.coe.info6205.randomwalk.RandomWalk();
         PrivateMethodTester pmt = new PrivateMethodTester(rw);
         pmt.invokePrivate("move", 1, 0);
         assertEquals(1.0, rw.distance(), 1.0E-7);
@@ -42,7 +42,7 @@ public class RandomWalkTest {
      */
     @Test
     public void testMove2() {
-        edu.neu.coe.info6205.randomwalk.RandomWalk1 rw = new edu.neu.coe.info6205.randomwalk.RandomWalk1();
+        edu.neu.coe.info6205.randomwalk.RandomWalk rw = new edu.neu.coe.info6205.randomwalk.RandomWalk();
         PrivateMethodTester pmt = new PrivateMethodTester(rw);
         pmt.invokePrivate("move", 0, 1);
         assertEquals(1.0, rw.distance(), 1.0E-7);
@@ -59,7 +59,7 @@ public class RandomWalkTest {
      */
     @Test
     public void testMove3() {
-        edu.neu.coe.info6205.randomwalk.RandomWalk1 rw = new edu.neu.coe.info6205.randomwalk.RandomWalk1();
+        edu.neu.coe.info6205.randomwalk.RandomWalk rw = new edu.neu.coe.info6205.randomwalk.RandomWalk();
         double root2 = Math.sqrt(2);
         PrivateMethodTester pmt = new PrivateMethodTester(rw);
         pmt.invokePrivate("move", 1, 1);
@@ -78,12 +78,12 @@ public class RandomWalkTest {
     @Test // Slow
     public void testRandomWalk() {
         for (int i = 0; i < 5000; i++)
-            assertEquals(10, edu.neu.coe.info6205.randomwalk.RandomWalk1.randomWalkMulti(100, 100), 4);
+            assertEquals(10, edu.neu.coe.info6205.randomwalk.RandomWalk.randomWalkMulti(100, 100), 4);
     }
 
     @Test
     public void testRandomWalk2() {
         for (int i = 0; i < 5000; i++)
-            assertNotSame(0, edu.neu.coe.info6205.randomwalk.RandomWalk1.randomWalkMulti(1, 1));
+            assertNotSame(0, edu.neu.coe.info6205.randomwalk.RandomWalk.randomWalkMulti(1, 1));
     }
 }
