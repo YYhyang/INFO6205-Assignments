@@ -1,9 +1,6 @@
 package edu.neu.coe.info6205.sort.par;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,43 +14,67 @@ import java.util.concurrent.ForkJoinPool;
 public class Main {
 
     public static void main(String[] args) {
-        processArgs(args);
-        System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+
+
+        for(int arrayLength=10000000;arrayLength<=14000000;arrayLength+=500000){
+            ForkJoinPool myPool = new ForkJoinPool(4);
+//        System.out.println("Degree of parallelism: " + threadCount);
+            System.out.println("Array length: " + arrayLength);
         Random random = new Random();
-        int[] array = new int[2000000];
+        int[] array = new int[arrayLength];
+        double lessCutoff=0;
+        long lessTime=999999999;
+        int lessCutoffValue=0;
         ArrayList<Long> timeList = new ArrayList<>();
-        for (int j = 50; j < 100; j++) {
-            ParSort.cutoff = 10000 * (j + 1);
+        for (double j = 0.1; j <= 0.5; j+=0.01) {
+            ParSort.cutoff = (int) (arrayLength*j);
             // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
             long time;
             long startTime = System.currentTimeMillis();
             for (int t = 0; t < 10; t++) {
                 for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-                ParSort.sort(array, 0, array.length);
+                ParSort.sort(array, 0, array.length,myPool);
             }
             long endTime = System.currentTimeMillis();
             time = (endTime - startTime);
             timeList.add(time);
-
+            if(lessTime>time){
+                lessTime=time;
+                lessCutoff=j;
+                lessCutoffValue=ParSort.cutoff;
+            }
 
             System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
 
         }
         try {
-            FileOutputStream fis = new FileOutputStream("./src/result.csv");
+            FileOutputStream fis = new FileOutputStream("./src/new/result_"+arrayLength+".csv");
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
-            int j = 0;
+            double j = 0.1;
             for (long i : timeList) {
-                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
-                j++;
+                String content = j+ "," + (double) i / 10 + "\n";
+                j+=0.01;
                 bw.write(content);
-                bw.flush();
+
             }
+            String content=lessCutoff+","+lessTime/10;
+            bw.write(content);
+            bw.flush();
             bw.close();
+
+            File f=new File("./src/new/best.txt");
+            FileWriter fw = new FileWriter(f, true);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.println(arrayLength+","+lessCutoffValue+","+lessCutoff+","+lessTime/10);
+            pw.flush();
+            fw.flush();
+            pw.close();
+            fw.close();
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
         }
     }
 
