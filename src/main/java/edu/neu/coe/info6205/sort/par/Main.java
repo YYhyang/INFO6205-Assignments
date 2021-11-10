@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This code has been fleshed out by Ziyao Qiao. Thanks very much.
@@ -13,64 +14,55 @@ import java.util.concurrent.ForkJoinPool;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
 
-        for(int arrayLength=10000000;arrayLength<=14000000;arrayLength+=500000){
-            ForkJoinPool myPool = new ForkJoinPool(4);
-//        System.out.println("Degree of parallelism: " + threadCount);
-            System.out.println("Array length: " + arrayLength);
+        for(int threadCount=8;threadCount>=2;threadCount/=2){
+        System.out.println("Degree of parallelism: " + threadCount);
+//            System.out.println("Array length: " + arrayLength);
         Random random = new Random();
-        int[] array = new int[arrayLength];
-        double lessCutoff=0;
-        long lessTime=999999999;
-        int lessCutoffValue=0;
+        int[] array = new int[2000000];
         ArrayList<Long> timeList = new ArrayList<>();
-        for (double j = 0.1; j <= 0.5; j+=0.01) {
-            ParSort.cutoff = (int) (arrayLength*j);
+            for (int j = 50; j < 100; j++) {
+                ForkJoinPool mypool=  new ForkJoinPool(threadCount);
+                ParSort.cutoff = 10000 * (j + 1);
             // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-            long time;
-            long startTime = System.currentTimeMillis();
+            long time=0;
             for (int t = 0; t < 10; t++) {
                 for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-                ParSort.sort(array, 0, array.length,myPool);
+                long startTime = System.currentTimeMillis();
+                ParSort.sort(array, 0, array.length,mypool);
+                long endTime = System.currentTimeMillis();
+                time += (endTime - startTime);
             }
-            long endTime = System.currentTimeMillis();
-            time = (endTime - startTime);
             timeList.add(time);
-            if(lessTime>time){
-                lessTime=time;
-                lessCutoff=j;
-                lessCutoffValue=ParSort.cutoff;
-            }
-
             System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
-
+            mypool.shutdown();
         }
         try {
-            FileOutputStream fis = new FileOutputStream("./src/new/result_"+arrayLength+".csv");
+            FileOutputStream fis = new FileOutputStream("./src/result_"+threadCount+".csv");
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
-            double j = 0.1;
+            double j = 50;
             for (long i : timeList) {
-                String content = j+ "," + (double) i / 10 + "\n";
-                j+=0.01;
+                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
+                j++;
                 bw.write(content);
-
+                bw.flush();
             }
-            String content=lessCutoff+","+lessTime/10;
-            bw.write(content);
-            bw.flush();
             bw.close();
+//            String content=lessCutoff+","+lessTime/10;
+//            bw.write(content);
 
-            File f=new File("./src/new/best.txt");
-            FileWriter fw = new FileWriter(f, true);
-            PrintWriter pw = new PrintWriter(fw);
-            pw.println(arrayLength+","+lessCutoffValue+","+lessCutoff+","+lessTime/10);
-            pw.flush();
-            fw.flush();
-            pw.close();
-            fw.close();
+//
+//            File f=new File("./src/new/best.txt");
+//            FileWriter fw = new FileWriter(f, true);
+//            PrintWriter pw = new PrintWriter(fw);
+//            pw.println(arrayLength+","+lessCutoffValue+","+lessCutoff+","+lessTime/10);
+//            pw.flush();
+//            fw.flush();
+//            pw.close();
+//            fw.close();
 
         } catch (IOException e) {
             e.printStackTrace();
